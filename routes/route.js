@@ -111,18 +111,33 @@ router.get("/readAllBlog", (req, res) => {
 })
 
 // comment on post
+// router.post("/commentOnPost/:id", (req, res) => {
+//     const id = req.params.id;
+//     Blog.findByIdAndUpdate(id, req.body)
+//     // console.log(req.body, "aaaaaaaaaaaaaaaa")
+//     .then(data => {
+//         res.json({
+//             message:"comment has posted....", data, });
+//     })
+//     .catch(err => {
+//         res.send(err)
+//     })
+// })
+// .....................
 router.post("/commentOnPost/:id", (req, res) => {
     const id = req.params.id;
-    Blog.findByIdAndUpdate(id, req.body)
-    .then(data => {
-        res.json({
-            message:"comment has posted....", data});
+    const blog = new Blog({
+        Comment: req.body.Comment
     })
-    .catch(err => {
-        res.send(err)
-    })
+    blog
+        .save(blog)
+        .then(data => {
+            res.send(data)
+        })
+        .catch(err => {
+            res.send(err);
+        })
 })
-
 
 // router.post("/blogPost", (req, res) => {
 //     const blog = new Blog({
