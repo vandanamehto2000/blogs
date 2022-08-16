@@ -25,7 +25,6 @@ router.post("/signUp", async (req, res) => {
             password: encryptedPassword
         })
         admin.save();
-        console.log("you have register successfully", admin);
         res.json({
             message: "you have register successfully",
             admin
@@ -86,51 +85,13 @@ router.post("/blogPost", (req, res) => {
     blog
         .save(blog)
         .then(data => {
-            console.log(data)
             res.send(data);
         })
         .catch(err => {
-            console.log(err);
             res.send(err)
         });
 
 })
-
-router.delete("/deletePost/:id", (req, res) => {
-    const id = req.params.id;
-    console.log("rrrrrrrrrrrrrrrrrr", id);
-    Blog.findByIdAndRemove({ id })
-        .then(data => {
-            res.send(data)
-        })
-        .catch(err => {
-            res.send(err)
-        })
-})
-// const id = req.params.id;
-// Employee.findByIdAndRemove({ id })
-//   .then(data => {
-//     console.log(`${data.deletedCount} Tutorials were deleted successfully!`)
-//     res.send(`${data.deletedCount} Tutorials were deleted successfully!`)
-//   })
-//   .catch(err => {
-//     console.log(err);
-//     res.send(err);
-//   })
-
-// exports.delete = (req, res) => {
-//     const id = req.params.id;
-//     Employee.findByIdAndRemove({ id })
-//       .then(data => {
-//         console.log(`${data.deletedCount} Tutorials were deleted successfully!`)
-//         res.send(`${data.deletedCount} Tutorials were deleted successfully!`)
-//       })
-//       .catch(err => {
-//         console.log(err);
-//         res.send(err);
-//       })
-//   }
-
 
 // Blog read by all the users
 router.get("/readAllBlog", (req, res) => {
@@ -145,9 +106,19 @@ router.get("/readAllBlog", (req, res) => {
         })
 })
 
+// delete post by id
+router.delete("/deletePost/:id", (req, res) => {
+    Blog.findByIdAndRemove(req.params.id, (err, data) => {
+        if (err) {
+            res.send(err)
+        } else {
+            res.send("deleted successfully!")
 
+        }
+    })
+})
 
-// ...........................
+// add comment on post by id
 router.post("/commentOnPost/:id", (req, res) => {
     try {
         const { comment } = req.body
@@ -155,22 +126,44 @@ router.post("/commentOnPost/:id", (req, res) => {
         console.log("body data", comment, "id", req.params.id)
         Blog.findByIdAndUpdate({ _id: req.params.id }, { $push: { 'comments': data } }, (err, result) => {
             if (err) {
-                console.log("error====", err)
                 res.send(err);
             }
             else {
-                console.log("true====", result)
                 res.send(result)
             }
         })
     }
     catch (err) {
-        console.log("error====", err)
         res.send(err);
     }
 
 })
 
+// delete comment by id
+router.post("/deleteComment/:id", async (req, res) => {
+
+    try {
+        let remove_id = ['62fb826e4a40a2c9de3a2c74'];
+        await Blog.findByIdAndUpdate({ _id: req.params.id }, {
+            $pull: {
+                comments: {
+                    _id: remove_id
+                }
+            }
+        }, (err, result) => {
+            if (err) {
+                res.send(err);
+            }
+            else {
+                res.send(result)
+            }
+
+        })
+    }
+    catch (err) {
+        res.send(err)
+    }
+})
 
 // register by users
 router.post("/signUpAsUser", async (req, res) => {
@@ -189,7 +182,6 @@ router.post("/signUpAsUser", async (req, res) => {
             password: encryptedPassword
         })
         user.save();
-        console.log("you have register successfully", user);
         res.json({
             message: "you have register successfully",
             user
@@ -238,7 +230,5 @@ router.get("/verifyAdmin", (req, res) => {
     })
 
 })
-
-
 
 module.exports = router;
