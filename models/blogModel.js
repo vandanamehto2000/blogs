@@ -8,10 +8,11 @@ const blogSchema = new mongoose.Schema({
         type: String,
         require:true
     },
-    comment: {
-        type:String,
-        require:true
-    }
+    comments:[
+        {
+            comment:{type: String , default:""},
+        }
+    ]
 })
 
 const blogPost = new mongoose.model("blogPost", blogSchema);

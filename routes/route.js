@@ -96,6 +96,41 @@ router.post("/blogPost", (req, res) => {
 
 })
 
+router.delete("/deletePost/:id", (req, res) => {
+    const id = req.params.id;
+    console.log("rrrrrrrrrrrrrrrrrr", id);
+    Blog.findByIdAndRemove({ id })
+        .then(data => {
+            res.send(data)
+        })
+        .catch(err => {
+            res.send(err)
+        })
+})
+// const id = req.params.id;
+// Employee.findByIdAndRemove({ id })
+//   .then(data => {
+//     console.log(`${data.deletedCount} Tutorials were deleted successfully!`)
+//     res.send(`${data.deletedCount} Tutorials were deleted successfully!`)
+//   })
+//   .catch(err => {
+//     console.log(err);
+//     res.send(err);
+//   })
+
+// exports.delete = (req, res) => {
+//     const id = req.params.id;
+//     Employee.findByIdAndRemove({ id })
+//       .then(data => {
+//         console.log(`${data.deletedCount} Tutorials were deleted successfully!`)
+//         res.send(`${data.deletedCount} Tutorials were deleted successfully!`)
+//       })
+//       .catch(err => {
+//         console.log(err);
+//         res.send(err);
+//       })
+//   }
+
 
 // Blog read by all the users
 router.get("/readAllBlog", (req, res) => {
@@ -110,69 +145,31 @@ router.get("/readAllBlog", (req, res) => {
         })
 })
 
-// comment on post
-// router.post("/commentOnPost/:id", (req, res) => {
-//     const id = req.params.id;
-//     Blog.findByIdAndUpdate(id, req.body)
-//     // console.log(req.body, "aaaaaaaaaaaaaaaa")
-//     .then(data => {
-//         res.json({
-//             message:"comment has posted....", data, });
-//     })
-//     .catch(err => {
-//         res.send(err)
-//     })
-// })
-// .....................
+
+
+// ...........................
 router.post("/commentOnPost/:id", (req, res) => {
-    const id = req.params.id;
-    const blog = new Blog({
-        Comment: req.body.Comment
-    })
-    blog
-        .save(blog)
-        .then(data => {
-            res.send(data)
+    try {
+        const { comment } = req.body
+        let data = { "comment": comment }
+        console.log("body data", comment, "id", req.params.id)
+        Blog.findByIdAndUpdate({ _id: req.params.id }, { $push: { 'comments': data } }, (err, result) => {
+            if (err) {
+                console.log("error====", err)
+                res.send(err);
+            }
+            else {
+                console.log("true====", result)
+                res.send(result)
+            }
         })
-        .catch(err => {
-            res.send(err);
-        })
+    }
+    catch (err) {
+        console.log("error====", err)
+        res.send(err);
+    }
+
 })
-
-// router.post("/blogPost", (req, res) => {
-//     const blog = new Blog({
-//         title: req.body.title,
-//         description: req.body.description,
-
-//     })
-//     blog
-//         .save(blog)
-//         .then(data => {
-//             console.log(data)
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             console.log(err);
-//             res.send(err)
-//         });
-
-// })
-
-
-
-// exports.post = (req, res) => {
-//     const id = req.params.id;
-//     Employee.findByIdAndUpdate(id, req.body)
-//       .then(data => {
-//         console.log("employee was updated successfully......")
-//         res.send("employee was updated successfully......")
-//       })
-//       .catch(err => {
-//         console.log(err);
-//         res.send(err);
-//       })
-//   }
-
 
 
 // register by users
