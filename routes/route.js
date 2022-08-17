@@ -8,6 +8,19 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const users = require("../models/users.model");
 
+
+// router.get("/allData", (req, res) => {
+//     Blog.find()
+//     .populate({path:"comments.userName",select: 'userName'})
+//     .then(data => {
+//         res.send(data)
+//     })
+//     .catch(err => {
+//         res.send(err)
+//     })
+// })
+
+
 // signUp for admin
 router.post("/signUp", async (req, res) => {
     let admin = await Admin.findOne({ email: req.body.email });
@@ -106,6 +119,12 @@ router.get("/readAllBlog", (req, res) => {
         })
 })
 
+
+router.get("/readAllBlog/:id", async(req, res) => {
+    const blogs = await Blog.findById(req.params.id).populate("comments");
+    res.send(blogs);
+})
+
 // delete post by id
 router.delete("/deletePost/:id", (req, res) => {
     Blog.findByIdAndRemove(req.params.id, (err, data) => {
@@ -119,11 +138,34 @@ router.delete("/deletePost/:id", (req, res) => {
 })
 
 // add comment on post by id
+// router.post("/commentOnPost/:id", (req, res) => {
+//     try {
+//         const { comment } = req.body
+//         let data = { "comment": comment }
+//         console.log("body data", comment, "id", req.params.id)
+//         Blog.findByIdAndUpdate({ _id: req.params.id }, { $push: { 'comments': data } }, (err, result) => {
+//             if (err) {
+//                 res.send(err);
+//             }
+//             else {
+//                 res.send(result)
+//             }
+//         })
+//     }
+//     catch (err) {
+//         res.send(err);
+//     }
+
+// })
+
+
 router.post("/commentOnPost/:id", (req, res) => {
     try {
-        const { comment } = req.body
-        let data = { "comment": comment }
-        console.log("body data", comment, "id", req.params.id)
+        const { comment , userName } = req.body
+        let data = { "comment": comment, "userName": userName }
+        console.log("body data", comment,userName, "id", req.params.id)
+        // return
+        console.log("data-",data)
         Blog.findByIdAndUpdate({ _id: req.params.id }, { $push: { 'comments': data } }, (err, result) => {
             if (err) {
                 res.send(err);
@@ -137,6 +179,18 @@ router.post("/commentOnPost/:id", (req, res) => {
         res.send(err);
     }
 
+})
+
+
+router.get("/allData", (req, res) => {
+    Blog.find()
+    .populate({path:"comments.userName",select: 'userName'})
+    .then(data => {
+        res.send(data)
+    })
+    .catch(err => {
+        res.send(err)
+    })
 })
 
 // delete comment by id
