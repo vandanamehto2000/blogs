@@ -17,7 +17,6 @@ const blogSchema = new mongoose.Schema({
         }
     ],
 
-
 })
 
 const blogPost = new mongoose.model("blogPost", blogSchema);
