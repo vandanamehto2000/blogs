@@ -181,10 +181,8 @@ router.get("/readAllBlog", (req, res) => {
 // comment on blogs by users
 router.post("/commentOnPost/:id", (req, res) => {
     try {
-        // const { comment, userName } = req.body
         const { comment, userId } = req.body
 
-        // let data = { "comment": comment, "userName": userName }
         let data = { "comment": comment, "userId": userId }
 
         Blog.findByIdAndUpdate({ _id: req.params.id }, { $push: { 'comments': data } }, (err, result) => {
